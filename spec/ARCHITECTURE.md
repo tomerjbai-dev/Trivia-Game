@@ -24,7 +24,7 @@
 
 - **Next.js לעומת Vite+React או SvelteKit:** שלוש החלופות מתאימות ל-UI. נבחר Next.js בשל שילוב טבעי של React ו-API Routes באותו Repository, תיעוד PWA רשמי, אינטגרציה ישירה ל-Vercel וקהילת פיתוח גדולה. אין צורך ב-SSR דינמי; אפשר לרנדר את המסכים כ-Static UI, כאשר ה-API הוא Serverless.
 - **Vercel לעומת Netlify או Cloudflare Workers:** שלושתן מספקות פריסה מ-Git; Vercel מפשטת במיוחד את פריסת Next.js עם Route Handlers ו-Preview deployments. GitHub Pages אינו מתאים לבדו משום שאסור לחשוף את מפתח OpenAI בדפדפן.
-- **OpenAI לעומת Gemini API או Anthropic API:** שלושתן מסוגלות לייצר טריוויה. נבחר OpenAI בזכות Structured Outputs, Moderation API ייעודי ותיעוד TypeScript. המודל הוא `gpt-5` (החלטת המשתמש). זהו מודל "חושב", ולכן כדי לקצר את זמן ההמתנה הקריאה תוגדר עם מאמץ חשיבה מינימלי (`reasoning.effort`) ותשובה קצרה. אין לשלוח פרמטרים שהמודל אינו תומך בהם (למשל `temperature`). בתחילת Milestone 2 יש לוודא שהמודל זמין בחשבון ותומך ב-Structured Outputs. מודל ה-AI מוגדר דרך משתנה הסביבה `OPENAI_MODEL` כדי לאפשר החלפה ללא שינוי בקוד.
+- **OpenAI לעומת Gemini API או Anthropic API:** שלושתן מסוגלות לייצר טריוויה. נבחר OpenAI בזכות Structured Outputs, Moderation API ייעודי ותיעוד TypeScript. המודל הוא `gpt-5` (החלטת המשתמש). זהו מודל "חושב", ולכן כדי לאזן בין זמן ההמתנה לאיכות השאלות הקריאה מוגדרת עם מאמץ חשיבה נמוך (`reasoning.effort: "low"`) ותשובה קצרה (ראו ADR-3). אין לשלוח פרמטרים שהמודל אינו תומך בהם (למשל `temperature`). בתחילת Milestone 2 יש לוודא שהמודל זמין בחשבון ותומך ב-Structured Outputs. מודל ה-AI מוגדר דרך משתנה הסביבה `OPENAI_MODEL` כדי לאפשר החלפה ללא שינוי בקוד.
 - **CSS Modules לעומת Tailwind או ספריית רכיבים:** שלושה מסכים אינם מצדיקים שכבת עיצוב נוספת; CSS Modules נותן בידוד סגנונות ללא תלויות כבדות.
 - **ללא Database:** שמירת היסטוריית השאלות בזיכרון הדפדפן במהלך השימוש הנוכחי בלבד; אין שמירת התקדמות מתמשכת. לכן Supabase, Migrations ופרויקטי Database נפרדים אינם רלוונטיים.
 - **Zod:** גם Structured Outputs אינו תחליף לבדיקת קלט ופלט בשרת.
@@ -205,3 +205,8 @@ Next.js Route Handler על Vercel (Node.js)
 **הקשר:** `create-next-app` אינו פועל בתיקייה שכבר מכילה קבצים (`spec/`, `CLAUDE.md`, `.gitignore`). בנוסף, TypeScript 7 ו-ESLint 10 עדיין אינם נתמכים רשמית על ידי `typescript-eslint` ותוספי ה-ESLint של Next.js.
 **החלטה:** `package.json` וקובצי התצורה נכתבו ידנית; נבחרו TypeScript ‏6.0 ו-ESLint ‏9 (Next.js ‏16, React ‏19). קובץ התצורה של Vitest הוא `vitest.config.mts`.
 **השלכות:** התקנה נקייה ללא התנגשויות תלויות. כשהכלים יתמכו בגרסאות החדשות, אפשר לשדרג.
+
+### ADR-3: מאמץ חשיבה נמוך במקום מינימלי
+**הקשר:** בבדיקה מול OpenAI עם `reasoning.effort: "minimal"` השאלות הגיעו תוך כ-1–1.5 שניות, אבל חלקן היו שגויות או חסרות היגיון.
+**החלטה:** (החלטת המשתמש) הקריאה ל-`gpt-5` נשלחת עם `reasoning.effort: "low"`. רמת הקושי של השאלות נשארת קלה-בינונית כמו ב-PRD.
+**השלכות:** השאלות שנבדקו היו נכונות וברורות. זמן ההמתנה עלה לכ-5–9 שניות, עדיין בתוך היעד של עד כ-10 שניות. עלות כל שאלה עולה מעט, כי גם Tokens של חשיבה נספרים.

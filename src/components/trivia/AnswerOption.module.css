@@ -1,0 +1,76 @@
+/* Answer Option (DESIGN 2.3) */
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-white);
+  box-shadow: var(--shadow);
+  text-align: start;
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.option:not(:disabled):hover {
+  border-color: var(--color-brand-blue);
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--color-text-secondary);
+  border-radius: 50%;
+  color: var(--color-white);
+}
+
+.text {
+  flex: 1;
+}
+
+.correct {
+  padding-inline: calc(var(--space-2) - 1px);
+  border: 2px solid var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.correct .marker {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+.wrong {
+  padding-inline: calc(var(--space-2) - 1px);
+  border: 2px solid var(--color-error);
+  background: var(--color-error-bg);
+}
+
+.wrong .marker {
+  border-color: var(--color-error);
+  background: var(--color-error);
+}
+
+.dimmed {
+  opacity: 0.6;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
