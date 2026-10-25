@@ -1,0 +1,10 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+}

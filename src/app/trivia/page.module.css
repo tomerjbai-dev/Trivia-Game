@@ -1,0 +1,35 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--color-light-blue) 35%, var(--color-white));
+  box-shadow: var(--shadow);
+}
+
+.label {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-white);
+  text-align: right;
+}
+
+.input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.input:focus {
+  outline: none;
+  border: 2px solid var(--color-brand-blue);
+  padding-inline: calc(var(--space-2) - 1px);
+}

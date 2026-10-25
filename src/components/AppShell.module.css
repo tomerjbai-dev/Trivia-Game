@@ -1,0 +1,52 @@
+.shell {
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Soft pastel blobs in the background (decorative only) */
+.shell::before,
+.shell::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.shell::before {
+  width: 220px;
+  height: 220px;
+  top: -60px;
+  inset-inline-start: -70px;
+  background: var(--color-light-blue);
+}
+
+.shell::after {
+  width: 240px;
+  height: 240px;
+  bottom: 40px;
+  inset-inline-end: -90px;
+  background: var(--color-secondary);
+}
+
+.header {
+  padding: var(--space-3) var(--space-2) var(--space-1);
+  text-align: center;
+}
+
+.brand {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.main {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-1) var(--space-2)
+    calc(var(--nav-height) + var(--space-4) + env(safe-area-inset-bottom));
+}

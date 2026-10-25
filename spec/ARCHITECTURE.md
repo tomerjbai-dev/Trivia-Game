@@ -193,3 +193,15 @@ Next.js Route Handler על Vercel (Node.js)
 8. OpenAI – [Data controls](https://developers.openai.com/api/docs/guides/your-data)
 9. Cloudflare – [Workers limits](https://developers.cloudflare.com/workers/platform/limits/) (חלופת Hosting שנבחנה)
 
+
+## החלטות מרכזיות (ADRs)
+
+### ADR-1: כתובת נפרדת לכל מסך ומצב משחק ב-Context משותף
+**הקשר:** לאפליקציה שלושה מסכים, ומצב המשחק (נושא, שאלה, בחירה) צריך להישמר במעבר ביניהם עד לרענון הדף.
+**החלטה:** כל מסך הוא כתובת ב-App Router: `/` (בית), `/trivia` (טריוויה), `/about` (אודות). המעבר נעשה ב-`next/link`, ו-`TriviaSessionProvider` (React Context) עוטף את כל המסכים ב-Layout הראשי.
+**השלכות:** ניווט בצד הלקוח שומר את המצב; רענון מאפס אותו כנדרש; כפתור "חזור" בדפדפן עובד באופן טבעי; כל המסכים נבנים כדפים סטטיים.
+
+### ADR-2: הקמה ידנית של הפרויקט וגרסאות כלים
+**הקשר:** `create-next-app` אינו פועל בתיקייה שכבר מכילה קבצים (`spec/`, `CLAUDE.md`, `.gitignore`). בנוסף, TypeScript 7 ו-ESLint 10 עדיין אינם נתמכים רשמית על ידי `typescript-eslint` ותוספי ה-ESLint של Next.js.
+**החלטה:** `package.json` וקובצי התצורה נכתבו ידנית; נבחרו TypeScript ‏6.0 ו-ESLint ‏9 (Next.js ‏16, React ‏19). קובץ התצורה של Vitest הוא `vitest.config.mts`.
+**השלכות:** התקנה נקייה ללא התנגשויות תלויות. כשהכלים יתמכו בגרסאות החדשות, אפשר לשדרג.
