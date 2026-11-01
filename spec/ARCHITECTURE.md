@@ -230,3 +230,8 @@ Next.js Route Handler על Vercel (Node.js)
 **הקשר:** ARCHITECTURE דורש בדיקות זרימה עם Playwright, בלי קריאות AI אמיתיות ובלי "מצב הדמיה" באפליקציה.
 **החלטה:** הבדיקות ב-`e2e/` רצות מול Build אמיתי (`next start` בפורט 3100, כדי לא להתנגש בהרצה ב-3000), בשלושה גדלי מסך (טלפון, טאבלט, מחשב) ב-Chromium. כל בדיקה מיירטת את `/api/questions` עם `page.route` ומחזירה שאלה או שגיאה מוכנה. הפקודה: `npm run test:e2e`; `npm test` נשאר ל-Vitest בלבד.
 **השלכות:** הבדיקות מהירות, יציבות וחינמיות. נתיב השרת עצמו (סינון, OpenAI) לא נבדק ב-E2E — הוא מכוסה בבדיקות Vitest של ה-Route. הרצת E2E כוללת Build ולכן אורכת כדקה.
+
+### ADR-8: פריסה דרך חיבור Vercel ל-GitHub בלבד
+**הקשר:** האתר צריך להתעדכן אוטומטית מ-GitHub, בלי פקודות Deploy ידניות ובלי לחשוף את מפתח OpenAI.
+**החלטה:** פרויקט Vercel יחיד (`trivia-game`, תוכנית Hobby) מחובר ל-`tomerjbai-dev/Trivia-Game`, עם Production Branch `main`. הכתובת החיה: https://trivia-game-dusky-three.vercel.app. `OPENAI_API_KEY` ו-`OPENAI_MODEL` מוגדרים רק בממשק Vercel (Production ו-Preview). גרסת Node.js נקבעת ל-24.x דרך `engines` ב-`package.json`, כמו בפיתוח המקומי. אין `vercel.json` ואין שימוש ב-Vercel CLI; `maxDuration` מוגדר ב-Route Handler.
+**השלכות:** כל push ל-`main` הוא פרסום מיידי לכל המשתמשים, ולכן הבדיקות המקומיות לפני push הן קו ההגנה היחיד. Rollback נעשה בממשק Vercel (Deployments ← Instant Rollback). שינוי משתנה סביבה ב-Vercel דורש Redeploy כדי להיכנס לתוקף.
