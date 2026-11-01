@@ -1,6 +1,6 @@
 .card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-2);
   border: 1px solid var(--color-error);
@@ -8,6 +8,18 @@
   background: var(--color-error-bg);
   box-shadow: var(--shadow);
   font-weight: 700;
+}
+
+/* Blocked or empty topic: a friendly prompt, not an error */
+.topic {
+  border-color: var(--color-accent);
+  background: var(--color-secondary);
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .icon {
@@ -20,4 +32,12 @@
   border-radius: 50%;
   background: var(--color-error);
   color: var(--color-white);
+}
+
+.topic .icon {
+  background: var(--color-brand-blue);
+}
+
+.retry {
+  align-self: flex-start;
 }

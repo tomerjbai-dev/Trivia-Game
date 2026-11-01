@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const parse = vi.fn();
+const OpenAIConstructor = vi.fn();
 vi.mock("openai", () => ({
-  default: vi.fn(function () {
+  default: vi.fn(function (options: unknown) {
+    OpenAIConstructor(options);
     return { responses: { parse } };
   }),
 }));
@@ -20,6 +22,7 @@ describe("generateQuestion", () => {
     vi.stubEnv("OPENAI_API_KEY", "test-key");
     vi.stubEnv("OPENAI_MODEL", "gpt-5");
     parse.mockReset();
+    OpenAIConstructor.mockReset();
   });
 
   afterEach(() => {
@@ -41,6 +44,13 @@ describe("generateQuestion", () => {
     // Topic and recent questions are passed as data, not inside the instructions.
     expect(JSON.parse(params.input)).toEqual({ topic: "פרות", recentQuestions: ["שאלה קודמת?"] });
     expect(params.instructions).not.toContain("פרות");
+  });
+
+  it("uses a 30 second timeout and no automatic retries", async () => {
+    parse.mockResolvedValue({ output_parsed: question });
+    await generateQuestion({ topic: "פרות", recentQuestions: [] });
+    expect(OpenAIConstructor).toHaveBeenCalledWith({ apiKey: "test-key", maxRetries: 0 });
+    expect(parse.mock.calls[0][1]).toEqual({ timeout: 30_000 });
   });
 
   it("uses the model from OPENAI_MODEL", async () => {

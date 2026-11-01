@@ -220,7 +220,90 @@ describe("TriviaPage – playing", () => {
     fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"));
     const { input } = renderPage();
     await userEvent.type(input, "פרות{Enter}");
-    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "נראה שאין חיבור לאינטרנט. בדקו את החיבור.",
+    );
+  });
+});
+
+function failWith(code: string, status: number) {
+  fetchMock.mockResolvedValueOnce(Response.json({ code }, { status }));
+}
+
+describe("TriviaPage – errors", () => {
+  it.each([
+    ["GENERATION_FAILED", 502, "אופס! לא הצלחנו להכין שאלה הפעם.", true],
+    ["SERVICE_UNAVAILABLE", 503, "אופס! לא הצלחנו להכין שאלה הפעם.", true],
+    ["GENERATION_TIMEOUT", 504, "השאלה התעכבה קצת יותר מדי.", true],
+    ["TEMPORARILY_BUSY", 429, "יש עכשיו הרבה שאלות בדרך. נחכה רגע?", true],
+    ["UNSAFE_TOPIC", 422, "בואו נבחר נושא אחר 🙂 את הנושא הזה לא נוכל לשאול עליו.", false],
+    ["INVALID_TOPIC", 400, "כתבו נושא כדי שנוכל להכין שאלה.", false],
+  ])("shows the message for %s", async (code, status, message, retry) => {
+    failWith(code, status);
+    const { input, button } = renderPage();
+    await userEvent.type(input, "פרות{Enter}");
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(message);
+    expect(screen.queryByRole("button", { name: "נסו שוב" }) !== null).toBe(retry);
+    expect(screen.queryByRole("group")).not.toBeInTheDocument();
+    expect(input).toHaveValue("פרות");
+    expect(button()).toBeEnabled();
+  });
+
+  it("shows the timeout message when the browser gives up waiting", async () => {
+    fetchMock.mockRejectedValueOnce(new DOMException("timed out", "TimeoutError"));
+    const { input } = renderPage();
+    await userEvent.type(input, "פרות{Enter}");
+    expect(await screen.findByRole("alert")).toHaveTextContent("השאלה התעכבה קצת יותר מדי.");
+  });
+
+  it("retries the same topic even after the box was edited", async () => {
+    failWith("GENERATION_FAILED", 502);
+    respondWith(cows);
+    const { input } = renderPage();
+    await userEvent.type(input, "פרות{Enter}");
+    await screen.findByRole("alert");
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "חלל");
+    await userEvent.click(screen.getByRole("button", { name: "נסו שוב" }));
+
+    expect(await screen.findByRole("heading", { name: cows.question })).toBeInTheDocument();
+    expect(sentBody(1).topic).toBe("פרות");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(input).toHaveValue("חלל");
+  });
+
+  it("sends only one request for repeated retry clicks", async () => {
+    failWith("GENERATION_FAILED", 502);
+    const resolve = respondLater(cows);
+    const { input } = renderPage();
+    await userEvent.type(input, "פרות{Enter}");
+
+    const retry = await screen.findByRole("button", { name: "נסו שוב" });
+    await userEvent.click(retry);
+    await userEvent.click(retry);
+    await userEvent.type(input, "{Enter}");
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    await resolve();
+  });
+
+  it("keeps the answered question visible under a blocked-topic message", async () => {
+    respondWith(cows);
+    failWith("UNSAFE_TOPIC", 422);
+    const { input, button } = renderPage();
+    await userEvent.type(input, "פרות{Enter}");
+    await userEvent.click(await screen.findByRole("button", { name: "דגים" }));
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "נושא רע");
+    await userEvent.click(button());
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("בואו נבחר נושא אחר");
+    expect(screen.getByRole("heading", { name: cows.question })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /דגים/ })).toHaveClass("wrong");
+    expect(input).toHaveValue("נושא רע");
   });
 });
 

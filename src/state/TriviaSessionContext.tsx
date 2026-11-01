@@ -29,13 +29,15 @@ type SessionState = {
   currentQuestion: TriviaQuestion | null;
   selectedIndex: number | null;
   seenQuestions: string[];
+  // Topic of the last request sent, so "נסו שוב" repeats it even if the box was edited.
+  lastRequestTopic: string | null;
   status: "idle" | "loading" | "error";
   errorCode: ErrorCode | null;
 };
 
 type Action =
   | { type: "setDraftTopic"; topic: string }
-  | { type: "requestStarted" }
+  | { type: "requestStarted"; topic: string }
   | { type: "requestSucceeded"; question: TriviaQuestion }
   | { type: "requestFailed"; code: ErrorCode }
   | { type: "answerSelected"; index: number };
@@ -46,6 +48,7 @@ const initialState: SessionState = {
   currentQuestion: null,
   selectedIndex: null,
   seenQuestions: [],
+  lastRequestTopic: null,
   status: "idle",
   errorCode: null,
 };
@@ -55,7 +58,7 @@ function reducer(state: SessionState, action: Action): SessionState {
     case "setDraftTopic":
       return { ...state, draftTopic: action.topic };
     case "requestStarted":
-      return { ...state, status: "loading", errorCode: null };
+      return { ...state, status: "loading", errorCode: null, lastRequestTopic: action.topic };
     case "requestSucceeded":
       return {
         ...state,
@@ -78,9 +81,10 @@ function reducer(state: SessionState, action: Action): SessionState {
   }
 }
 
-type TriviaSession = Omit<SessionState, "seenQuestions"> & {
+type TriviaSession = Omit<SessionState, "seenQuestions" | "lastRequestTopic"> & {
   setDraftTopic: (topic: string) => void;
   requestQuestion: () => Promise<void>;
+  retry: () => Promise<void>;
   selectAnswer: (index: number) => void;
 };
 
@@ -100,12 +104,12 @@ export function TriviaSessionProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "setDraftTopic", topic });
   }, []);
 
-  const requestQuestion = useCallback(async () => {
-    const topic = stateRef.current.draftTopic.trim();
+  const sendRequest = useCallback(async (topic: string) => {
+    // Guards against double clicks / Enter while a request is in flight.
     if (!topic || loadingRef.current) return;
 
     loadingRef.current = true;
-    dispatch({ type: "requestStarted" });
+    dispatch({ type: "requestStarted", topic });
     const result = await fetchQuestion({
       topic,
       recentQuestions: stateRef.current.seenQuestions.map((q) =>
@@ -124,6 +128,16 @@ export function TriviaSessionProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const requestQuestion = useCallback(
+    () => sendRequest(stateRef.current.draftTopic.trim()),
+    [sendRequest],
+  );
+
+  const retry = useCallback(
+    () => sendRequest(stateRef.current.lastRequestTopic ?? stateRef.current.draftTopic.trim()),
+    [sendRequest],
+  );
+
   const selectAnswer = useCallback((index: number) => {
     dispatch({ type: "answerSelected", index });
   }, []);
@@ -138,9 +152,10 @@ export function TriviaSessionProvider({ children }: { children: ReactNode }) {
       errorCode: state.errorCode,
       setDraftTopic,
       requestQuestion,
+      retry,
       selectAnswer,
     }),
-    [state, setDraftTopic, requestQuestion, selectAnswer],
+    [state, setDraftTopic, requestQuestion, retry, selectAnswer],
   );
 
   return <TriviaSessionContext.Provider value={value}>{children}</TriviaSessionContext.Provider>;

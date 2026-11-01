@@ -16,7 +16,9 @@ export default function TriviaPage() {
     currentQuestion,
     selectedIndex,
     status,
+    errorCode,
     requestQuestion,
+    retry,
     selectAnswer,
   } = useTriviaSession();
   const loading = status === "loading";
@@ -64,7 +66,9 @@ export default function TriviaPage() {
         />
       )}
 
-      {status === "error" && <ErrorCard />}
+      {status === "error" && errorCode && (
+        <ErrorCard code={errorCode} onRetry={() => void retry()} />
+      )}
 
       {answered && (
         <>
