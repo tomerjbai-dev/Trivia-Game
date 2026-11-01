@@ -105,3 +105,12 @@ a {
   outline: 3px solid var(--color-brand-blue);
   outline-offset: 2px;
 }
+
+/* Keep motion minimal for users who asked for it; the loading dots have their own fallback */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -12,7 +12,10 @@
 }
 
 .question {
+  padding-top: var(--space-1);
   font-size: var(--font-size-h2);
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .options {

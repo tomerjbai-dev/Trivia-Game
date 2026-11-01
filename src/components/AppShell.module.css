@@ -1,5 +1,7 @@
 .shell {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100dvh;
   overflow-x: hidden;
 }
@@ -33,18 +35,31 @@
 }
 
 .header {
-  padding: var(--space-3) var(--space-2) var(--space-1);
+  /* Room for the status bar / notch when installed as a standalone app */
+  padding: calc(var(--space-3) + env(safe-area-inset-top)) var(--space-2) var(--space-1);
   text-align: center;
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-size: var(--font-size-h1);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.2;
+  letter-spacing: -0.5px;
   color: var(--color-text);
 }
 
+.sparkle {
+  flex-shrink: 0;
+}
+
 .main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: var(--space-1) var(--space-2)

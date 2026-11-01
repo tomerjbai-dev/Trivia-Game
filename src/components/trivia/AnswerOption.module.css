@@ -13,11 +13,21 @@
   text-align: start;
   font-size: var(--font-size-body);
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
 }
 
-.option:not(:disabled):hover {
+.option:not(:disabled):hover,
+.option:not(:disabled):focus-visible {
   border-color: var(--color-brand-blue);
+  background: color-mix(in srgb, var(--color-light-blue) 25%, var(--color-white));
+}
+
+.option:not(:disabled):hover .marker {
+  border-color: var(--color-brand-blue);
+}
+
+.option:not(:disabled):active {
+  transform: scale(0.99);
 }
 
 .option:disabled {
@@ -38,6 +48,7 @@
 
 .text {
   flex: 1;
+  overflow-wrap: anywhere;
 }
 
 .correct {

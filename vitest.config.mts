@@ -11,6 +11,8 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
+    // Playwright specs run separately with `npm run test:e2e`
+    exclude: ["e2e/**", "node_modules/**"],
     css: { modules: { classNameStrategy: "non-scoped" } },
   },
 });

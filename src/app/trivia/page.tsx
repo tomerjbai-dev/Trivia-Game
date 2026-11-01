@@ -3,6 +3,7 @@
 import type { FormEvent } from "react";
 import { useTriviaSession } from "@/state/TriviaSessionContext";
 import buttonStyles from "@/components/Button.module.css";
+import { PencilIcon } from "@/components/icons";
 import ErrorCard from "@/components/trivia/ErrorCard";
 import FeedbackCard from "@/components/trivia/FeedbackCard";
 import LoadingIndicator from "@/components/trivia/LoadingIndicator";
@@ -36,16 +37,22 @@ export default function TriviaPage() {
         <label htmlFor="topic" className={styles.label}>
           איזה נושא מעניין אתכם?
         </label>
-        <input
-          id="topic"
-          type="text"
-          className={styles.input}
-          placeholder="לדוגמה: דינוזאורים, חלל, חיות"
-          maxLength={100}
-          autoComplete="off"
-          value={draftTopic}
-          onChange={(event) => setDraftTopic(event.target.value)}
-        />
+        <div className={styles.inputWrap}>
+          <input
+            id="topic"
+            type="text"
+            className={styles.input}
+            placeholder="לדוגמה: דינוזאורים, חלל, חיות"
+            maxLength={100}
+            autoComplete="off"
+            enterKeyHint="go"
+            value={draftTopic}
+            onChange={(event) => setDraftTopic(event.target.value)}
+          />
+          <span className={styles.inputIcon} aria-hidden="true">
+            <PencilIcon />
+          </span>
+        </div>
         <button type="submit" className={buttonStyles.primary} disabled={!canRequest}>
           שאלה חדשה
         </button>

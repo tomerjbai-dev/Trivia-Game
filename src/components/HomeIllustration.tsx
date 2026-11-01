@@ -1,56 +1,125 @@
-// Temporary home illustration (DESIGN 2.6): puzzle piece, question mark and light bulb.
+// Temporary home illustration (DESIGN 2.6), in the Style Guide's flat, outlined style:
+// puzzle piece, big question mark and light bulb. Replaced by
+// public/images/home-illustration.png if one is supplied.
+const OUTLINE = "#2D2D2D";
+
+// Question mark on a 24x24 grid, reused for the big center mark.
+const QUESTION_PATH = "M8.5 8.6a3.6 3.6 0 0 1 7 1.1c0 2.4-3.5 3-3.5 5.3";
+
 export default function HomeIllustration() {
   return (
     <svg
-      viewBox="0 0 320 220"
+      viewBox="0 0 360 260"
       width="100%"
       role="img"
       aria-label="איור של פאזל, סימן שאלה ונורה"
-      style={{ maxWidth: 360, display: "block", margin: "0 auto" }}
+      style={{ maxWidth: 400, display: "block", margin: "0 auto" }}
     >
-      {/* Soft background blob */}
-      <ellipse cx="160" cy="120" rx="140" ry="88" fill="#BDEAF5" opacity="0.55" />
+      {/* Soft pastel blobs behind the scene */}
+      <path
+        d="M70 150c-10-60 50-110 120-104 60 5 120 30 112 92-7 56-60 86-128 82-60-4-96-22-104-70z"
+        fill="#BDEAF5"
+        opacity="0.6"
+      />
+      <ellipse cx="250" cy="190" rx="70" ry="40" fill="#F9E68C" opacity="0.45" />
+
+      {/* Dashed curly trail */}
+      <path
+        d="M30 236c40-30 80 10 110-12s10-40-12-30 4 44 50 42 70-14 92-4"
+        fill="none"
+        stroke={OUTLINE}
+        strokeWidth="2"
+        strokeDasharray="6 6"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
 
       {/* Puzzle piece (left) */}
-      <g transform="translate(28 78) rotate(-12 50 50)">
+      <g transform="translate(34 92) rotate(-14 40 50)">
         <path
-          d="M10 22h24a12 12 0 1 1 22 0h24v24a12 12 0 1 1 0 22v24H56a12 12 0 1 0-22 0H10z"
+          d="M0 10h25a12 12 0 1 1 30 0h25v25a12 12 0 1 1 0 30v25H55a12 12 0 1 0-30 0H0z"
           fill="#F87A7A"
-          stroke="#2D2D2D"
+          stroke={OUTLINE}
           strokeWidth="3"
           strokeLinejoin="round"
         />
-        <text x="45" y="78" textAnchor="middle" fontSize="40" fontWeight="700" fill="#F9E68C" fontFamily="Arial, sans-serif">
-          ?
-        </text>
+        <g transform="translate(14 22) scale(2.2)">
+          <path
+            d={QUESTION_PATH}
+            fill="none"
+            stroke="#F9E68C"
+            strokeWidth="2.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            transform="translate(-6 -4)"
+          />
+          <circle cx="6" cy="15.2" r="1.7" fill="#F9E68C" />
+        </g>
       </g>
 
-      {/* Big question mark (center) */}
-      <g>
-        <circle cx="160" cy="104" r="58" fill="#FFFFFF" stroke="#2D2D2D" strokeWidth="3" />
-        <text x="160" y="134" textAnchor="middle" fontSize="88" fontWeight="700" fill="#6B8DD6" fontFamily="Arial, sans-serif">
-          ?
-        </text>
+      {/* Big question mark (center): dark outline under a blue stroke */}
+      <g transform="translate(108 30) scale(6)">
+        <path
+          d={QUESTION_PATH}
+          fill="none"
+          stroke={OUTLINE}
+          strokeWidth="4.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d={QUESTION_PATH}
+          fill="none"
+          stroke="#6B8DD6"
+          strokeWidth="3.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="12" cy="19.4" r="2" fill="#6B8DD6" stroke={OUTLINE} strokeWidth="0.5" />
       </g>
 
       {/* Light bulb (right) */}
-      <g transform="translate(232 52)">
-        <circle cx="34" cy="40" r="30" fill="#F9E68C" stroke="#2D2D2D" strokeWidth="3" />
-        <rect x="21" y="68" width="26" height="22" rx="4" fill="#6B8DD6" stroke="#2D2D2D" strokeWidth="3" />
-        <path d="M24 77h20M24 84h20" stroke="#2D2D2D" strokeWidth="2" />
-        <text x="34" y="53" textAnchor="middle" fontSize="36" fontWeight="700" fill="#F87A7A" fontFamily="Arial, sans-serif">
-          ?
-        </text>
+      <g transform="translate(246 58) rotate(10 36 50)">
+        <path
+          d="M36 4C18 4 6 18 6 34c0 11 6 19 12 25 3 3 4 6 4 10h28c0-4 1-7 4-10 6-6 12-14 12-25C66 18 54 4 36 4z"
+          fill="#F9E68C"
+          stroke={OUTLINE}
+          strokeWidth="3"
+          strokeLinejoin="round"
+        />
+        <rect x="22" y="69" width="28" height="9" rx="3" fill="#6B8DD6" stroke={OUTLINE} strokeWidth="3" />
+        <rect x="24" y="78" width="24" height="9" rx="3" fill="#6B8DD6" stroke={OUTLINE} strokeWidth="3" />
+        <path d="M30 87h12v4a6 6 0 0 1-12 0z" fill={OUTLINE} />
+        <g transform="translate(22 14) scale(1.25)">
+          <path
+            d={QUESTION_PATH}
+            fill="none"
+            stroke="#E35D5D"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            transform="translate(-1 -3)"
+          />
+          <circle cx="11" cy="16.4" r="1.8" fill="#E35D5D" />
+        </g>
       </g>
 
-      {/* Sparkles */}
-      <g stroke="#FBC78B" strokeWidth="5" strokeLinecap="round">
-        <path d="M222 30l8-14M246 26l14-8M290 52l14-4" />
-        <path d="M34 54l-10-10M60 40l-4-14" />
-      </g>
-      <g fill="#F9E68C">
-        <circle cx="110" cy="200" r="6" />
-        <circle cx="214" cy="196" r="5" />
+      {/* Star */}
+      <path
+        transform="translate(214 40)"
+        d="M0-14 3.53-4.85 13.31-4.33 5.71 1.85 8.23 11.33 0 6-8.23 11.33-5.71 1.85-13.31-4.33-3.53-4.85z"
+        fill="#F9E68C"
+        stroke={OUTLINE}
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+
+      {/* Sparkle dashes */}
+      <g strokeWidth="5" strokeLinecap="round">
+        <path d="M262 36l6-14M286 44l13-7" stroke="#FBC78B" />
+        <path d="M322 98l14-3" stroke="#6B8DD6" />
+        <path d="M30 80l-12-8M48 62l-4-14" stroke="#F9E68C" />
+        <path d="M92 40l-8-10" stroke="#F87A7A" />
       </g>
     </svg>
   );

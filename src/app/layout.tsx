@@ -6,7 +6,7 @@ import "./globals.css";
 
 const heebo = Heebo({
   subsets: ["hebrew", "latin"],
-  weight: ["400", "700"],
+  weight: ["400", "700", "800"],
   variable: "--font-heebo",
   display: "swap",
 });
@@ -14,11 +14,15 @@ const heebo = Heebo({
 export const metadata: Metadata = {
   title: "חכמולוגים",
   description: "שאלות מעניינות על כל מה שמסקרן אתכם",
+  // Name and icon for "Add to Home Screen" on iOS
+  appleWebApp: { capable: true, title: "חכמולוגים", statusBarStyle: "default" },
+  icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#F8F8F8",
 };
 
